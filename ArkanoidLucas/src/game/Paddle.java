@@ -3,6 +3,7 @@ package game;
 import com.senac.SimpleJava.Graphics.Canvas;
 import com.senac.SimpleJava.Graphics.Color;
 import com.senac.SimpleJava.Graphics.Drawable;
+import com.senac.SimpleJava.Graphics.Point;
 import com.senac.SimpleJava.Graphics.Rect;
 import com.senac.SimpleJava.Graphics.Resolution;
 import com.senac.SimpleJava.Graphics.Sprite;

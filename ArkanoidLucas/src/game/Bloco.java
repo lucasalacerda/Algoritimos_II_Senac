@@ -1,5 +1,6 @@
 package game;
 
+import com.senac.SimpleJava.Graphics.Canvas;
 import com.senac.SimpleJava.Graphics.Color;
 import com.senac.SimpleJava.Graphics.Image;
 import com.senac.SimpleJava.Graphics.Rect;
@@ -16,6 +17,10 @@ public class Bloco extends Sprite{
 				Resolution.MSX.height-90
 				);
 	}
+	public void draw(Canvas canvas) {
+		super.draw(canvas);
+	}
+	
 	public Rect getBounds() {
 		return super.getBounds();
 	}

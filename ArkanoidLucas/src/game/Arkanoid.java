@@ -21,11 +21,21 @@ public class Arkanoid extends GraphicApplication {
 	
 	private KeyboardAction moveBRight = new KeyboardAction() {
 		public void handleEvent(){
-			paddle.move(6,0);}
+			Point posicaoPaddle = paddle.getPosition();
+			paddle.move(8,0);
+			if(posicaoPaddle.x > Resolution.MSX.width-paddle.getWidth()){
+				paddle.move(-8, 0);	
+				}
+			}
 		};
 	private KeyboardAction moveBLeft = new KeyboardAction() {
 		public void handleEvent(){
-			paddle.move(-6,0);}
+			Point posicaoPaddle = paddle.getPosition();
+			paddle.move(-8,0);
+			if (posicaoPaddle.x < 0) {
+			paddle.move(8, 0);	
+			}
+		}
 		};
 	
 
@@ -35,13 +45,13 @@ public class Arkanoid extends GraphicApplication {
 		
 		bola.draw(canvas);
 		paddle.draw(canvas);
-		if(colidiuBloco(bloco.getBounds())==false){
-			bloco.draw(canvas);
-		}
+		if(desenhaBloco==true)
+		bloco.draw(canvas);
 	}
 
 	@Override
 	protected void setup() {
+		
 		setResolution(Resolution.MSX);
 		setFramesPerSecond(80);
 		bola = new Bola();
@@ -50,14 +60,9 @@ public class Arkanoid extends GraphicApplication {
 		
 		paddle = new Paddle();
 		
-		
-		
 		bindKeyPressed("LEFT", moveBLeft);
 			
 		bindKeyPressed("RIGHT", moveBRight);
-			
-			
-	
 	}
 
 	@Override
@@ -67,7 +72,7 @@ public class Arkanoid extends GraphicApplication {
 		
 		colidiuParede(bola);
 		colidiuPaddle(bola, paddle);
-		colidiuBloco(bloco.getBounds());
+		colidiuBloco(bola, bloco);
 		
 		
 		
@@ -75,7 +80,7 @@ public class Arkanoid extends GraphicApplication {
 
 		
 	}
-	
+	//==============VERIFICA SE A BOLA BATEU NA PAREDE==================
 	private void colidiuParede(Bola bola) {
 		Point posicao = bola.getPosition();
 		if (posicao.x < 0 || posicao.x >= Resolution.MSX.width-5){
@@ -86,27 +91,15 @@ public class Arkanoid extends GraphicApplication {
 		}	
 	}
 	
-	private boolean colidiuBloco(Rect bounds){
+	//==============SE BATEU NO BLOCO, APAGA============================
+	private void colidiuBloco(Bola bola, Bloco paddle){
 		Point posicaoBola = bola.getPosition();
-		double maximoX = bounds.x + bounds.width;
-		double maximoY = bounds.y + bounds.height;
-		if (bounds.x <= posicaoBola.x && maximoX >= posicaoBola.x)
-			if (bounds.y <= posicaoBola.y && maximoY >= posicaoBola.y)
-				return true;
-		return false;
-	}
-	
-	private boolean colidiu(Point posicaoBola, Rect bounds){
-	
-		double maximoX = bounds.x + bounds.width;
-		double maximoY = bounds.y + bounds.height;
-		if (bounds.x <= posicaoBola.x && maximoX >= posicaoBola.x)
-			if (bounds.y <= posicaoBola.y && maximoY >= posicaoBola.y)
-				return true;
-		return false;
 		
+		if (colidiu(posicaoBola,paddle.getBounds())){
+			desenhaBloco = false;
+		}	
 	}
-	
+	//=============SE BATEU NO PADDLE, INVERTE===========================
 	private void colidiuPaddle(Bola bola, Paddle paddle){
 		Point posicaoBola = bola.getPosition();
 		
@@ -116,6 +109,18 @@ public class Arkanoid extends GraphicApplication {
 		}
 		
 	}
+	//=============VERIFICA SE A BOLA BATEU EM ALGO=======================
+	private boolean colidiu(Point posicaoBola, Rect bounds){
+	
+		double maximoX = bounds.x + bounds.width;
+		double maximoY = bounds.y + bounds.height;
+		if (bounds.x <= posicaoBola.x && maximoX >= posicaoBola.x)
+			if (bounds.y <= posicaoBola.y && maximoY >= posicaoBola.y)
+				return true;
+		return false;
+	}
+
+	
 }
 
 

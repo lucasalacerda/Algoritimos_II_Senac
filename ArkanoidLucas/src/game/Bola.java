@@ -4,8 +4,8 @@ import com.senac.SimpleJava.Graphics.Color;
 import com.senac.SimpleJava.Graphics.Sprite;
 
 public class Bola extends Sprite {
-	private double dy = 2.0;
-	private double dx = 2.0;
+	private double dy = 1.0;
+	private double dx = 1.0;
 	
 	public Bola() {
 		super(5,5,Color.BLACK);
