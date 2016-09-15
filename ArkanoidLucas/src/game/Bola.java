@@ -1,6 +1,7 @@
 package game;
 
 import com.senac.SimpleJava.Graphics.Color;
+import com.senac.SimpleJava.Graphics.Resolution;
 import com.senac.SimpleJava.Graphics.Sprite;
 
 public class Bola extends Sprite {
@@ -9,6 +10,10 @@ public class Bola extends Sprite {
 	
 	public Bola() {
 		super(5,5,Color.BLACK);
+			setPosition(
+					Resolution.MSX.width/2-5,
+					Resolution.MSX.height-10
+					);
 		
 	}
 

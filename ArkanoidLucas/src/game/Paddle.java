@@ -24,5 +24,21 @@ public class Paddle extends Sprite{
 		return super.getBounds();
 	}
 	
+	public void colidiuPaddle(Bola bola){
+		
+		Point posicaoBola = bola.getPosition();
+		double tamanhoX = super.getPosition().x + super.getWidth();
+		double tamanhoY = super.getPosition().y + super.getHeight();
+		if (super.getPosition().x <= posicaoBola.x && tamanhoX >= posicaoBola.x)
+			if (super.getPosition().y <= posicaoBola.y && tamanhoY >= posicaoBola.y){
+				bola.invertVertical();
+
+			}
+		
+			
+		
+		
+	}
+	
 	
 }

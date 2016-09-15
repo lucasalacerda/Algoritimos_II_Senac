@@ -14,10 +14,12 @@ import com.senac.SimpleJava.Graphics.events.KeyboardAction;
 public class Arkanoid extends GraphicApplication {
 
 	private Bola bola;
-	private Bloco bloco;
+	private Bloco[] bloco;
 	private Paddle paddle;
 	private boolean desenhaBloco=true;
-	private int auxiliar = 0;
+	private int tamanhoArrayBloco = 10;
+	private int indiceBloco = 0;
+	
 	
 	private KeyboardAction moveBRight = new KeyboardAction() {
 		public void handleEvent(){
@@ -46,7 +48,11 @@ public class Arkanoid extends GraphicApplication {
 		bola.draw(canvas);
 		paddle.draw(canvas);
 		if(desenhaBloco==true)
-		bloco.draw(canvas);
+			for(int i = 0; i < 10; i++){
+				bloco[i].draw(canvas);
+			}
+			
+			
 	}
 
 	@Override
@@ -54,10 +60,11 @@ public class Arkanoid extends GraphicApplication {
 		
 		setResolution(Resolution.MSX);
 		setFramesPerSecond(80);
+		
+		criaBlocos();
+
 		bola = new Bola();
-		
-		bloco = new Bloco();
-		
+			
 		paddle = new Paddle();
 		
 		bindKeyPressed("LEFT", moveBLeft);
@@ -69,10 +76,15 @@ public class Arkanoid extends GraphicApplication {
 	protected void loop() {
 		
 		bola.move();
-		
+
 		colidiuParede(bola);
-		colidiuPaddle(bola, paddle);
-		colidiuBloco(bola, bloco);
+		paddle.colidiuPaddle(bola);
+		
+		colidiuBloco();
+		
+		
+
+		
 		
 		
 		
@@ -80,6 +92,31 @@ public class Arkanoid extends GraphicApplication {
 
 		
 	}
+	
+	private void criaBlocos(){
+		bloco = new Bloco[tamanhoArrayBloco];
+		for (int i = 0; i < tamanhoArrayBloco; i++) {
+			bloco[i] = new Bloco();
+			int x = (i%5)*26+1;
+			int y = (i/5)*10+20;
+			bloco[i].setPosition(new Point(x,y));
+			
+		}
+		
+	}
+	private void colidiuBloco(){
+		
+		for (int i = 0; i < bloco.length; i++) {
+			if(bloco[i].colidiu(bola)){
+				bola.invertVertical();
+				bloco[i].clear(Color.BLACK);
+				
+				
+			}
+		}
+		
+	}
+	
 	//==============VERIFICA SE A BOLA BATEU NA PAREDE==================
 	private void colidiuParede(Bola bola) {
 		Point posicao = bola.getPosition();
@@ -90,37 +127,6 @@ public class Arkanoid extends GraphicApplication {
 			bola.invertVertical();
 		}	
 	}
-	
-	//==============SE BATEU NO BLOCO, APAGA============================
-	private void colidiuBloco(Bola bola, Bloco paddle){
-		Point posicaoBola = bola.getPosition();
-		
-		if (colidiu(posicaoBola,paddle.getBounds())){
-			desenhaBloco = false;
-		}	
-	}
-	//=============SE BATEU NO PADDLE, INVERTE===========================
-	private void colidiuPaddle(Bola bola, Paddle paddle){
-		Point posicaoBola = bola.getPosition();
-		
-		if (colidiu(posicaoBola,paddle.getBounds())){
-			bola.invertVertical();
-		
-		}
-		
-	}
-	//=============VERIFICA SE A BOLA BATEU EM ALGO=======================
-	private boolean colidiu(Point posicaoBola, Rect bounds){
-	
-		double maximoX = bounds.x + bounds.width;
-		double maximoY = bounds.y + bounds.height;
-		if (bounds.x <= posicaoBola.x && maximoX >= posicaoBola.x)
-			if (bounds.y <= posicaoBola.y && maximoY >= posicaoBola.y)
-				return true;
-		return false;
-	}
-
-	
 }
 
 
