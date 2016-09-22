@@ -1,7 +1,13 @@
 package game;
 
+import java.io.File;
 import java.io.IOException;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JOptionPane;
 
 import com.senac.SimpleJava.Graphics.Canvas;
@@ -35,6 +41,10 @@ public class Arkanoid extends GraphicApplication {
 	private Image bgEstagioDois;
 	private Image bgEstagioTres;
 	private int estagioAtual = 0;
+	private File soundFile;
+	private final String cleanStage = "Audio/cleanStage.wav";
+	private final String quebraBloco = "Audio/quebraBloco.wav";
+	private final String gameOver = "Audio/gameOver.wav";
 
 	
 	//=======================MOVE PADDLE PARA A DIREITA==================================
@@ -220,14 +230,15 @@ public class Arkanoid extends GraphicApplication {
 					bola.invertVertical();
 					bloco[i].clear(Color.GRAY);
 					score = score + 100;
-					
+					carregaAudio(quebraBloco);
 				}		
 			}
 			else{
 				if(bloco[i].colidiu(bola)){
 					bola.invertVertical();
 					score = score +100;
-					
+					carregaAudio(quebraBloco);
+
 					}
 				}
 			}
@@ -240,18 +251,21 @@ public class Arkanoid extends GraphicApplication {
 	//VALIDA OS PONTOS PARA AVANÇAR OS ESTAGIOS
 	private void ConcluiEstagio(){
 		if(estagioAtual == 0 && score == 4000){
+			carregaAudio(cleanStage);
 			JOptionPane.showMessageDialog(null, "Parabéns! Você completou o estágio!");
 			bola.posicionaBola();
 			paddle.posicionaPaddle();
 			estagioAtual++;
 		}
 		else if(estagioAtual == 1 && score == 8000){
+			carregaAudio(cleanStage);
 			JOptionPane.showMessageDialog(null, "Parabéns! Você completou o estágio!");
 			bola.posicionaBola();
 			paddle.posicionaPaddle();
 			estagioAtual++;
 		}
-		else if(estagioAtual == 2 && score == 12000){
+		else if(estagioAtual == 2 && score == 16000){
+			carregaAudio(cleanStage);
 			JOptionPane.showMessageDialog(null, "Parabéns! Você completou o jogo!");
 			System.exit(0);
 		}	
@@ -287,6 +301,25 @@ public class Arkanoid extends GraphicApplication {
 				bloco[i].draw(canvas);
 		}
 	}	
+	
+	//=====================>>>>>>>CARREGAAUDIO<<<<<<===============================
+	//===========================CARREGA O AUDIO PASSANDO POR PARAMETRO UMA STRING
+	private void carregaAudio(String audioPath){
+			try {
+				soundFile = new File(audioPath);
+				AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+				Clip clip = AudioSystem.getClip();
+				clip.open(audioIn);
+				clip.start();
+			} catch (UnsupportedAudioFileException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (LineUnavailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	
 	
 	//==========================CARREGA IMAGENS=======================================
 	
