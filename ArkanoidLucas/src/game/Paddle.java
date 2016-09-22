@@ -1,6 +1,7 @@
 package game;
 
 import com.senac.SimpleJava.Graphics.Color;
+import com.senac.SimpleJava.Graphics.Image;
 import com.senac.SimpleJava.Graphics.Point;
 import com.senac.SimpleJava.Graphics.Rect;
 import com.senac.SimpleJava.Graphics.Resolution;
@@ -8,8 +9,8 @@ import com.senac.SimpleJava.Graphics.Sprite;
 
 public class Paddle extends Sprite{
 
-	public Paddle(){
-		super(25,5,Color.BLUE);
+	public Paddle(Image paddle){
+		super(paddle);
 		setPosition(
 				Resolution.MSX.width/2-5,
 				Resolution.MSX.height-10
@@ -30,11 +31,14 @@ public class Paddle extends Sprite{
 			if (super.getPosition().y <= posicaoBola.y && tamanhoY >= posicaoBola.y){
 				bola.invertVertical();
 
-			}
-		
-			
-		
-		
+			}		
+	}
+
+	public void posicionaPaddle() {
+		super.setPosition(
+				Resolution.MSX.width/2-5,
+				Resolution.MSX.height-10
+				);		
 	}
 	
 	

@@ -9,7 +9,6 @@ import com.senac.SimpleJava.Graphics.Color;
 import com.senac.SimpleJava.Graphics.GraphicApplication;
 import com.senac.SimpleJava.Graphics.Image;
 import com.senac.SimpleJava.Graphics.Point;
-import com.senac.SimpleJava.Graphics.Rect;
 import com.senac.SimpleJava.Graphics.Resolution;
 import com.senac.SimpleJava.Graphics.events.KeyboardAction;
 
@@ -20,20 +19,33 @@ public class Arkanoid extends GraphicApplication {
 	private Bloco[] blocoLinhaUm = new Bloco[tamanhoArrayBloco];
 	private Bloco[] blocoLinhaDois = new Bloco[tamanhoArrayBloco];
 	private Bloco[] blocoLinhaTres = new Bloco[tamanhoArrayBloco];
+	private Bloco[] blocoLinhaUmEstagioDois = new Bloco[tamanhoArrayBloco];
+	private Bloco[] blocoLinhaDoisEstagioDois = new Bloco[tamanhoArrayBloco];
+	private Bloco[] blocoLinhaTresEstagioDois = new Bloco[tamanhoArrayBloco];
+	private Bloco[] blocoLinhaUmEstagioTres = new Bloco[tamanhoArrayBloco];
+	private Bloco[] blocoLinhaDoisEstagioTres = new Bloco[tamanhoArrayBloco];
+	private Bloco[] blocoLinhaTresEstagioTres = new Bloco[tamanhoArrayBloco];
+	private Bloco[] blocoLinhaQuatroEstagioTres = new Bloco[tamanhoArrayBloco];
 	private Paddle paddle;
 	private int score = 0;
+	private int hscore = 0;
 	private int vida = 3;
-	private Image background;
-	private Rect limits;
+	private Image paddleImage;
+	private Image bgEstagioUm;
+	private Image bgEstagioDois;
+	private Image bgEstagioTres;
+	private int estagioAtual = 0;
 
 	
 	//=======================MOVE PADDLE PARA A DIREITA==================================
 	private KeyboardAction moveRight = new KeyboardAction() {
 		public void handleEvent(){
 			Point posicaoPaddle = paddle.getPosition();
-			paddle.move(10,0);
-			if(posicaoPaddle.x > Resolution.MSX.width-paddle.getWidth()){
-				paddle.move(-10, 0);	
+			if(posicaoPaddle.x > Resolution.MSX.width-30){
+				paddle.move(0,0);
+			}
+			else{
+				paddle.move(8, 0);
 				}
 			}
 		};//=======FINAL MOVERIGHT
@@ -42,9 +54,10 @@ public class Arkanoid extends GraphicApplication {
 	private KeyboardAction moveLeft = new KeyboardAction() {
 		public void handleEvent(){
 			Point posicaoPaddle = paddle.getPosition();
-			paddle.move(-10,0);
-			if (posicaoPaddle.x < 0) {
-			paddle.move(10, 0);	
+			if(posicaoPaddle.x < 0)
+			paddle.move(0,0);
+			else{
+			paddle.move(-8, 0);	
 			}
 		}
 		};//=======FINAL MOVELEFT
@@ -53,100 +66,206 @@ public class Arkanoid extends GraphicApplication {
 	//=============================MÉTODO DRAW==================================
 	@Override
 	protected void draw(Canvas canvas) {
+		
 		canvas.clear();
-		canvas.drawImage(background, 0, 0);
+		if(estagioAtual == 0){
+			canvas.drawImage(bgEstagioUm, 0, 0);	
+		}
+		if(estagioAtual == 1){
+			canvas.drawImage(bgEstagioDois, 0, 0);
+		}
+		if(estagioAtual == 2){
+			canvas.drawImage(bgEstagioTres, 0, 0);
+		}
+		gameOver(canvas);
+
 		canvas.setForeground(Color.WHITE);
 		canvas.putText(2, 2, 10, "SCORE:");
-		canvas.putText(45, 2, 10, String.format("%05d", score));
-		canvas.putText(110, 2, 10, "TENTATIVAS:");
-		canvas.putText(185, 2, 10, String.valueOf(vida));
-
-
-
+		canvas.putText(42, 2, 10, String.format("%05d", score));
+		canvas.putText(85, 2, 10, "RECORD:");
+		canvas.putText(132, 2, 10, String.format("%05d", hscore));
+		canvas.putText(170, 2, 10, "TENTATIVAS:");
+		canvas.putText(240, 2, 10, String.valueOf(vida));
+		
 		
 		bola.draw(canvas);
 		paddle.draw(canvas);
-			for(int i = 0; i < 10; i++){
-				blocoLinhaUm[i].draw(canvas);
-				blocoLinhaDois[i].draw(canvas);
-				blocoLinhaTres[i].draw(canvas);
+		
+		if(estagioAtual == 0){
+			desenhaBloco(blocoLinhaUm, canvas);
+			desenhaBloco(blocoLinhaDois, canvas);
+			desenhaBloco(blocoLinhaTres, canvas);
+		}
+		if(estagioAtual == 1){
+			desenhaBloco(blocoLinhaUmEstagioDois, canvas);
+			desenhaBloco(blocoLinhaDoisEstagioDois, canvas);
+			desenhaBloco(blocoLinhaTresEstagioDois, canvas);
+		}
+		if(estagioAtual == 2){
+			desenhaBloco(blocoLinhaUmEstagioTres, canvas);
+			desenhaBloco(blocoLinhaDoisEstagioTres, canvas);
+			desenhaBloco(blocoLinhaTresEstagioTres, canvas);
+			desenhaBloco(blocoLinhaQuatroEstagioTres, canvas);
 
-			}
+		}
+		
+		
+			
 	}//=======FINAL DRAW
 
 	//=============================MÉTODO SETUP==================================
 	@Override
 	protected void setup() {
 		carregaImagens();
+		//carregaAudio();
 		setResolution(Resolution.MSX);
-		setFramesPerSecond(100);
+		setFramesPerSecond(80);
 		criaBlocos();
+		
 
 		bola = new Bola();
-		paddle = new Paddle();
+		paddle = new Paddle(paddleImage);
 		
 		bindKeyPressed("LEFT", moveLeft);
 		bindKeyPressed("RIGHT", moveRight);
 	}//=======FINAL SETUP
 	
-	//=============================MÉTODO LOOP==================================
+	
+	//=================================MÉTODO LOOP==================================
+	
+	
 	@Override
 	protected void loop() {
 		
 		bola.move();
 		paddle.colidiuPaddle(bola);
 		bola.colidiuParede(bola);
-		colidiuBloco(blocoLinhaUm);
-		colidiuBloco(blocoLinhaDois);
-		colidiuBloco(blocoLinhaTres);
-		if(vida == 0){
-			JOptionPane.showMessageDialog(null,"FIM DE JOGO", "MORREU DEMAIS",JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
-		}
-		youLose();
 		
-			redraw();	
-	}//=======FINAL LOOP
-	
-	//==========================CARREGA IMAGENS=======================================
-	
-	private void carregaImagens(){
-		try {
-			//limits = new Rect(0,0,Canvas.SCREEN_WIDTH,Canvas.SCREEN_HEIGHT);
-			background = new Image("Imagens/background.jpg");
-			background.resize(Resolution.MSX.width,Resolution.MSX.height);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		//gameOver();
+		youLose();
+
+		if(estagioAtual == 0){
+			colidiuBloco(blocoLinhaUm);
+			colidiuBloco(blocoLinhaDois);
+			colidiuBloco(blocoLinhaTres);
 		}
-	}
+		if(estagioAtual == 1){
+			colidiuBloco(blocoLinhaUmEstagioDois);
+			colidiuBloco(blocoLinhaDoisEstagioDois);
+			colidiuBloco(blocoLinhaTresEstagioDois);
+		}
+		if(estagioAtual == 2){
+			colidiuBloco(blocoLinhaUmEstagioTres);
+			colidiuBloco(blocoLinhaDoisEstagioTres);
+			colidiuBloco(blocoLinhaTresEstagioTres);
+			colidiuBloco(blocoLinhaQuatroEstagioTres);
+
+		}
+
+		
+		ConcluiEstagio();
+
+		redraw();	
+	}//========================================FINAL LOOP
+	
+	
 	
 	//=======================CRIACAO DAS TRES LINAHS DE BLOCOS========================
+	
 	private void criaBlocos(){
 		for (int i = 0; i < tamanhoArrayBloco; i++) {
-			int x = (i%10)*26+2;			
-			blocoLinhaUm[i] = new Bloco();
-			blocoLinhaUm[i].setPosition(new Point(x, 30));
-			blocoLinhaDois[i] = new Bloco();
-			blocoLinhaDois[i].setPosition(new Point(x,36));
-			blocoLinhaTres[i] = new Bloco();
-			blocoLinhaTres[i].setPosition(new Point(x,42));
+			int x = (i%10)*26+2;		
+			
+				blocoLinhaUm[i] = new Bloco(Color.RED);
+				blocoLinhaUm[i].setPosition(new Point(x, 30));
+				blocoLinhaDois[i] = new Bloco(Color.RED);
+				blocoLinhaDois[i].setPosition(new Point(x,36));
+				blocoLinhaTres[i] = new Bloco(Color.RED);
+				blocoLinhaTres[i].setPosition(new Point(x,42));
+		
+			
+				blocoLinhaUmEstagioDois[i] = new Bloco(Color.CYAN);
+				blocoLinhaUmEstagioDois[i].setPosition(new Point(x, 30));
+				blocoLinhaDoisEstagioDois[i] = new Bloco(Color.DARKGRAY);
+				blocoLinhaDoisEstagioDois[i].setPosition(new Point(x,36));
+				blocoLinhaTresEstagioDois[i] = new Bloco(Color.CYAN);
+				blocoLinhaTresEstagioDois[i].setPosition(new Point(x,42));
+		
+				blocoLinhaUmEstagioTres[i] = new Bloco(Color.DARKGRAY);
+				blocoLinhaUmEstagioTres[i].setPosition(new Point(x, 30));
+				blocoLinhaDoisEstagioTres[i] = new Bloco(Color.GREEN);
+				blocoLinhaDoisEstagioTres[i].setPosition(new Point(x,36));
+				blocoLinhaTresEstagioTres[i] = new Bloco(Color.GREEN);
+				blocoLinhaTresEstagioTres[i].setPosition(new Point(x,42));
+				blocoLinhaQuatroEstagioTres[i] = new Bloco(Color.DARKGRAY);
+				blocoLinhaQuatroEstagioTres[i].setPosition(new Point(x,48));
+
+			//}
+		
 					
 		}
 		
 	}//=======FINAL CRIABLOCOS
 	
+	
 	//==================VERIFICA SE BOLA COLIDIU COM ALGUM BLOCO======================
 	private void colidiuBloco(Bloco[] bloco){
 		
-		for (int i = 0; i < tamanhoArrayBloco; i++) {
-			if(bloco[i].colidiu(bola)){
-				bola.invertVertical();
-				score = score +100;
+		for (int i = 0; i < tamanhoArrayBloco; i++){
+//Se o bloco for um desses tres abaixo. É um bloco que deve ser atingido 2 vezes para morrer.
+			if(bloco[i] == blocoLinhaDoisEstagioDois[i]
+					|| bloco[i] == blocoLinhaUmEstagioTres[i]
+							|| bloco[i] == blocoLinhaQuatroEstagioTres[i]){
+				if(bloco[i].colidiuBlocoDois(bola)){
+					bola.invertVertical();
+					bloco[i].clear(Color.GRAY);
+					score = score + 100;
+					
+				}		
 			}
+			else{
+				if(bloco[i].colidiu(bola)){
+					bola.invertVertical();
+					score = score +100;
+					
+					}
+				}
+			}
+			if(score > hscore){
+			hscore = score;
+			}
+		}//=======FINAL CLIDIUBLOCO
+
+	//===============================CONCLUIESTAGIO=================================
+	//VALIDA OS PONTOS PARA AVANÇAR OS ESTAGIOS
+	private void ConcluiEstagio(){
+		if(estagioAtual == 0 && score == 4000){
+			JOptionPane.showMessageDialog(null, "Parabéns! Você completou o estágio!");
+			bola.posicionaBola();
+			paddle.posicionaPaddle();
+			estagioAtual++;
 		}
-		
-	}//=======FINAL CLIDIUBLOCO
+		else if(estagioAtual == 1 && score == 8000){
+			JOptionPane.showMessageDialog(null, "Parabéns! Você completou o estágio!");
+			bola.posicionaBola();
+			paddle.posicionaPaddle();
+			estagioAtual++;
+		}
+		else if(estagioAtual == 2 && score == 12000){
+			JOptionPane.showMessageDialog(null, "Parabéns! Você completou o jogo!");
+			System.exit(0);
+		}	
+	}//=========================FIM CONCLUIESTAGIO
+
+	
+	//=====================GAMEOVER===================================
+	//VERIFICA SE NÃO HÁ MAIS VIDA
+	private void gameOver(Canvas canvas){
+		if(vida == 0){
+			JOptionPane.showMessageDialog(null,"GAME OVER");
+			System.exit(0);
+		}
+	}
 
 	//=================================YOULOSE=========================================
 	//VERIFICA SE BOLA FOI PARA O LIMITE DO CHÃO E VALIDA AS VIDAS RESTANTES
@@ -156,19 +275,36 @@ public class Arkanoid extends GraphicApplication {
 			bola.setDx(0);
 			bola.setDy(0);
 			vida = vida-1;
-			paddle.setPosition(
-					Resolution.MSX.width/2-5,
-					Resolution.MSX.height-10
-					);
-			bola.setPosition(
-					Resolution.MSX.width/2-5,
-					Resolution.MSX.height-11
-					);
-			bola.setDx(1.5);
-			bola.setDy(1.5);
+			bola.posicionaBola();
+			paddle.posicionaPaddle();
 		}
 			
 	}
+	//================================DESENHABLOCO======================================
+	//====================MÉTODO PARA DESENHAR OS BLOCOS CHAMADO NO DRAW================
+	public void desenhaBloco(Bloco[] bloco, Canvas canvas){
+			for(int i = 0; i < tamanhoArrayBloco; i++){
+				bloco[i].draw(canvas);
+		}
+	}	
+	
+	//==========================CARREGA IMAGENS=======================================
+	
+		private void carregaImagens(){
+			try {
+				paddleImage = new Image ("Imagens/paddle.jpg");
+				paddleImage.resize(30, 6);
+				bgEstagioUm = new Image("Imagens/bgEstagio1.jpg");
+				bgEstagioUm.resize(Resolution.MSX.width,Resolution.MSX.height);
+				bgEstagioDois = new Image("Imagens/bgEstagio2.jpg");
+				bgEstagioDois.resize(Resolution.MSX.width,Resolution.MSX.height);
+				bgEstagioTres = new Image("Imagens/bgEstagio3.jpg");
+				bgEstagioTres.resize(Resolution.MSX.width,Resolution.MSX.height);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	
 }//=======FINAL ARKANOID
 

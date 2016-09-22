@@ -6,8 +6,8 @@ import com.senac.SimpleJava.Graphics.Resolution;
 import com.senac.SimpleJava.Graphics.Sprite;
 
 public class Bola extends Sprite {
-	private double dy = 1.5;
-	private double dx = 1.5;
+	private double dy = 1.0;
+	private double dx = 1.0;
 
 	public double getDy() {
 		return dy;
@@ -57,5 +57,14 @@ public class Bola extends Sprite {
 			bola.invertVertical();
 		
 		}
+
+	public void posicionaBola() {
+		super.setPosition(
+				Resolution.MSX.width/2-5,
+				Resolution.MSX.height-11
+				);
+		dx = 1.0;
+		dy = 1.0;
+	}
 	
 }
