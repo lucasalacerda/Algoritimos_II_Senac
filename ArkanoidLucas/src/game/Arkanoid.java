@@ -33,18 +33,20 @@ public class Arkanoid extends GraphicApplication {
 	private Bloco[] blocoLinhaTresEstagioTres = new Bloco[tamanhoArrayBloco];
 	private Bloco[] blocoLinhaQuatroEstagioTres = new Bloco[tamanhoArrayBloco];
 	private Paddle paddle;
-	private int score = 0;
+	private int score = 12900;
 	private int hscore = 0;
 	private int vida = 3;
 	private Image paddleImage;
 	private Image bgEstagioUm;
 	private Image bgEstagioDois;
 	private Image bgEstagioTres;
-	private int estagioAtual = 0;
+	private int estagioAtual = 2;
 	private File soundFile;
 	private final String cleanStage = "Audio/cleanStage.wav";
 	private final String quebraBloco = "Audio/quebraBloco.wav";
 	private final String gameOver = "Audio/gameOver.wav";
+	private final String die = "Audio/die.wav";
+	private Clip clip; 
 
 	
 	//=======================MOVE PADDLE PARA A DIREITA==================================
@@ -126,8 +128,10 @@ public class Arkanoid extends GraphicApplication {
 	//=============================MÉTODO SETUP==================================
 	@Override
 	protected void setup() {
+		
 		carregaImagens();
-		//carregaAudio();
+		carregaAudio(cleanStage);
+		clip.stop();
 		setResolution(Resolution.MSX);
 		setFramesPerSecond(80);
 		criaBlocos();
@@ -256,6 +260,7 @@ public class Arkanoid extends GraphicApplication {
 			bola.posicionaBola();
 			paddle.posicionaPaddle();
 			estagioAtual++;
+			clip.stop();
 		}
 		else if(estagioAtual == 1 && score == 8000){
 			carregaAudio(cleanStage);
@@ -263,6 +268,7 @@ public class Arkanoid extends GraphicApplication {
 			bola.posicionaBola();
 			paddle.posicionaPaddle();
 			estagioAtual++;
+			clip.stop();
 		}
 		else if(estagioAtual == 2 && score == 16000){
 			carregaAudio(cleanStage);
@@ -276,6 +282,7 @@ public class Arkanoid extends GraphicApplication {
 	//VERIFICA SE NÃO HÁ MAIS VIDA
 	private void gameOver(Canvas canvas){
 		if(vida == 0){
+			carregaAudio(gameOver);
 			JOptionPane.showMessageDialog(null,"GAME OVER");
 			System.exit(0);
 		}
@@ -286,6 +293,7 @@ public class Arkanoid extends GraphicApplication {
 	private void youLose(){
 		Point posicaoBola = bola.getPosition();
 		if(posicaoBola.y >= Resolution.MSX.height-5){
+			carregaAudio(die);
 			bola.setDx(0);
 			bola.setDy(0);
 			vida = vida-1;
@@ -308,7 +316,7 @@ public class Arkanoid extends GraphicApplication {
 			try {
 				soundFile = new File(audioPath);
 				AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
-				Clip clip = AudioSystem.getClip();
+				clip = AudioSystem.getClip();
 				clip.open(audioIn);
 				clip.start();
 			} catch (UnsupportedAudioFileException | IOException e) {
