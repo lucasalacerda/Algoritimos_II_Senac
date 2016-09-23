@@ -33,14 +33,14 @@ public class Arkanoid extends GraphicApplication {
 	private Bloco[] blocoLinhaTresEstagioTres = new Bloco[tamanhoArrayBloco];
 	private Bloco[] blocoLinhaQuatroEstagioTres = new Bloco[tamanhoArrayBloco];
 	private Paddle paddle;
-	private int score = 12900;
+	private int score = 0;
 	private int hscore = 0;
 	private int vida = 3;
 	private Image paddleImage;
 	private Image bgEstagioUm;
 	private Image bgEstagioDois;
 	private Image bgEstagioTres;
-	private int estagioAtual = 2;
+	private int estagioAtual = 0;
 	private File soundFile;
 	private final String cleanStage = "Audio/cleanStage.wav";
 	private final String quebraBloco = "Audio/quebraBloco.wav";
@@ -57,7 +57,7 @@ public class Arkanoid extends GraphicApplication {
 				paddle.move(0,0);
 			}
 			else{
-				paddle.move(8, 0);
+				paddle.move(4, 0);
 				}
 			}
 		};//=======FINAL MOVERIGHT
@@ -66,10 +66,10 @@ public class Arkanoid extends GraphicApplication {
 	private KeyboardAction moveLeft = new KeyboardAction() {
 		public void handleEvent(){
 			Point posicaoPaddle = paddle.getPosition();
-			if(posicaoPaddle.x < 0)
+			if(posicaoPaddle.x < 2)
 			paddle.move(0,0);
 			else{
-			paddle.move(-8, 0);	
+			paddle.move(-4, 0);	
 			}
 		}
 		};//=======FINAL MOVELEFT
@@ -89,7 +89,7 @@ public class Arkanoid extends GraphicApplication {
 		if(estagioAtual == 2){
 			canvas.drawImage(bgEstagioTres, 0, 0);
 		}
-		gameOver(canvas);
+		gameOver();
 
 		canvas.setForeground(Color.WHITE);
 		canvas.putText(2, 2, 10, "SCORE:");
@@ -133,7 +133,7 @@ public class Arkanoid extends GraphicApplication {
 		carregaAudio(cleanStage);
 		clip.stop();
 		setResolution(Resolution.MSX);
-		setFramesPerSecond(80);
+		setFramesPerSecond(40);
 		criaBlocos();
 		
 
@@ -155,7 +155,6 @@ public class Arkanoid extends GraphicApplication {
 		paddle.colidiuPaddle(bola);
 		bola.colidiuParede(bola);
 		
-		//gameOver();
 		youLose();
 
 		if(estagioAtual == 0){
@@ -213,9 +212,6 @@ public class Arkanoid extends GraphicApplication {
 				blocoLinhaTresEstagioTres[i].setPosition(new Point(x,42));
 				blocoLinhaQuatroEstagioTres[i] = new Bloco(Color.DARKGRAY);
 				blocoLinhaQuatroEstagioTres[i].setPosition(new Point(x,48));
-
-			//}
-		
 					
 		}
 		
@@ -254,7 +250,7 @@ public class Arkanoid extends GraphicApplication {
 	//===============================CONCLUIESTAGIO=================================
 	//VALIDA OS PONTOS PARA AVANÇAR OS ESTAGIOS
 	private void ConcluiEstagio(){
-		if(estagioAtual == 0 && score == 4000){
+		if(estagioAtual == 0 && score == 3000){
 			carregaAudio(cleanStage);
 			JOptionPane.showMessageDialog(null, "Parabéns! Você completou o estágio!");
 			bola.posicionaBola();
@@ -280,11 +276,20 @@ public class Arkanoid extends GraphicApplication {
 	
 	//=====================GAMEOVER===================================
 	//VERIFICA SE NÃO HÁ MAIS VIDA
-	private void gameOver(Canvas canvas){
+	private void gameOver(){
 		if(vida == 0){
 			carregaAudio(gameOver);
-			JOptionPane.showMessageDialog(null,"GAME OVER");
-			System.exit(0);
+			if (JOptionPane.showConfirmDialog(null, "Deseja reiniciar?", "GAME OVER",
+			        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+				bola.posicionaBola();
+				paddle.posicionaPaddle();
+				estagioAtual = 0;
+				score = 0;
+				vida = 3;
+				criaBlocos();			
+			} else {
+				System.exit(0);
+			}
 		}
 	}
 
