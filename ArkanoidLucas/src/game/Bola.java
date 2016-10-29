@@ -6,8 +6,8 @@ import com.senac.SimpleJava.Graphics.Resolution;
 import com.senac.SimpleJava.Graphics.Sprite;
 
 public class Bola extends Sprite {
-	private double dy = 1.0;
-	private double dx = 1.0;
+	private double dy = 0.8;
+	private double dx = 0.8;
 
 	public double getDy() {
 		return dy;
@@ -63,8 +63,8 @@ public class Bola extends Sprite {
 				Resolution.MSX.width/2-5,
 				Resolution.MSX.height-11
 				);
-		dx = 1.0;
-		dy = 1.0;
+		dx = 0.8;
+		dy = 0.8;
 	}
 	
 }

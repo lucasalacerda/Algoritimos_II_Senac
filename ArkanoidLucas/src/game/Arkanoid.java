@@ -33,9 +33,9 @@ public class Arkanoid extends GraphicApplication {
 	private Bloco[] blocoLinhaTresEstagioTres = new Bloco[tamanhoArrayBloco];
 	private Bloco[] blocoLinhaQuatroEstagioTres = new Bloco[tamanhoArrayBloco];
 	private Paddle paddle;
-	private int score = 0;
+	private int score = 2900;
 	private int hscore = 0;
-	private int vida = 3;
+	private int vida = 1;
 	private Image paddleImage;
 	private Image bgEstagioUm;
 	private Image bgEstagioDois;
@@ -133,7 +133,7 @@ public class Arkanoid extends GraphicApplication {
 		carregaAudio(cleanStage);
 		clip.stop();
 		setResolution(Resolution.MSX);
-		setFramesPerSecond(40);
+		setFramesPerSecond(100);
 		criaBlocos();
 		
 
@@ -189,28 +189,28 @@ public class Arkanoid extends GraphicApplication {
 		for (int i = 0; i < tamanhoArrayBloco; i++) {
 			int x = (i%10)*26+2;		
 			
-				blocoLinhaUm[i] = new Bloco(Color.RED);
+				blocoLinhaUm[i] = new Bloco(Color.RED, 1);
 				blocoLinhaUm[i].setPosition(new Point(x, 30));
-				blocoLinhaDois[i] = new Bloco(Color.RED);
+				blocoLinhaDois[i] = new Bloco(Color.RED, 1);
 				blocoLinhaDois[i].setPosition(new Point(x,36));
-				blocoLinhaTres[i] = new Bloco(Color.RED);
+				blocoLinhaTres[i] = new Bloco(Color.RED, 1);
 				blocoLinhaTres[i].setPosition(new Point(x,42));
 		
 			
-				blocoLinhaUmEstagioDois[i] = new Bloco(Color.CYAN);
+				blocoLinhaUmEstagioDois[i] = new Bloco(Color.CYAN, 1);
 				blocoLinhaUmEstagioDois[i].setPosition(new Point(x, 30));
-				blocoLinhaDoisEstagioDois[i] = new Bloco(Color.DARKGRAY);
+				blocoLinhaDoisEstagioDois[i] = new Bloco(Color.DARKGRAY, 2);
 				blocoLinhaDoisEstagioDois[i].setPosition(new Point(x,36));
-				blocoLinhaTresEstagioDois[i] = new Bloco(Color.CYAN);
+				blocoLinhaTresEstagioDois[i] = new Bloco(Color.CYAN, 1);
 				blocoLinhaTresEstagioDois[i].setPosition(new Point(x,42));
 		
-				blocoLinhaUmEstagioTres[i] = new Bloco(Color.DARKGRAY);
+				blocoLinhaUmEstagioTres[i] = new Bloco(Color.DARKGRAY, 2);
 				blocoLinhaUmEstagioTres[i].setPosition(new Point(x, 30));
-				blocoLinhaDoisEstagioTres[i] = new Bloco(Color.GREEN);
+				blocoLinhaDoisEstagioTres[i] = new Bloco(Color.GREEN, 1);
 				blocoLinhaDoisEstagioTres[i].setPosition(new Point(x,36));
-				blocoLinhaTresEstagioTres[i] = new Bloco(Color.GREEN);
+				blocoLinhaTresEstagioTres[i] = new Bloco(Color.GREEN, 1);
 				blocoLinhaTresEstagioTres[i].setPosition(new Point(x,42));
-				blocoLinhaQuatroEstagioTres[i] = new Bloco(Color.DARKGRAY);
+				blocoLinhaQuatroEstagioTres[i] = new Bloco(Color.DARKGRAY, 2);
 				blocoLinhaQuatroEstagioTres[i].setPosition(new Point(x,48));
 					
 		}
@@ -222,25 +222,15 @@ public class Arkanoid extends GraphicApplication {
 	private void colidiuBloco(Bloco[] bloco){
 		
 		for (int i = 0; i < tamanhoArrayBloco; i++){
-//Se o bloco for um desses tres abaixo. É um bloco que deve ser atingido 2 vezes para morrer.
-			if(bloco[i] == blocoLinhaDoisEstagioDois[i]
-					|| bloco[i] == blocoLinhaUmEstagioTres[i]
-							|| bloco[i] == blocoLinhaQuatroEstagioTres[i]){
-				if(bloco[i].colidiuBlocoDois(bola)){
-					bola.invertVertical();
-					bloco[i].clear(Color.GRAY);
-					score = score + 100;
-					carregaAudio(quebraBloco);
-				}		
-			}
-			else{
+			
 				if(bloco[i].colidiu(bola)){
 					bola.invertVertical();
+					bloco[i].clear(Color.GRAY);
 					score = score +100;
 					carregaAudio(quebraBloco);
 
 					}
-				}
+				
 			}
 			if(score > hscore){
 			hscore = score;
@@ -282,6 +272,7 @@ public class Arkanoid extends GraphicApplication {
 			if (JOptionPane.showConfirmDialog(null, "Deseja reiniciar?", "GAME OVER",
 			        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 				bola.posicionaBola();
+				clip.stop();
 				paddle.posicionaPaddle();
 				estagioAtual = 0;
 				score = 0;

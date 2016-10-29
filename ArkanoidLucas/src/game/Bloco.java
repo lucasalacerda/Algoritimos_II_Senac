@@ -10,10 +10,11 @@ import com.senac.SimpleJava.Graphics.Sprite;
 
 public class Bloco extends Sprite{
 	private boolean alive = true;
-	private int contadorBloco = 0;
+	private int vidaBloco = 0; 
 
-	public Bloco(Color color){
+	public Bloco(Color color, int vida){
 		super(25, 5, color);
+		vidaBloco = vida;
 	
 	}
 	public void draw(Canvas canvas) {
@@ -26,7 +27,7 @@ public class Bloco extends Sprite{
 }//fecha restauraBloco
 	
 	//====================É PRECISO BATER 2 VEZES NESSE TIPO DE BLOCO========================
-	public boolean colidiuBlocoDois(Bola bola){
+	public boolean colidiu(Bola bola){
 		
 		if (!alive){
 			return false;
@@ -36,34 +37,13 @@ public class Bloco extends Sprite{
 		double tamanhoY = super.getPosition().y + super.getHeight();
 		if (super.getPosition().x <= posicaoBola.x && tamanhoX >= posicaoBola.x)
 			if (super.getPosition().y <= posicaoBola.y && tamanhoY >= posicaoBola.y){
-				contadorBloco++;
-				if(contadorBloco == 2){
+				vidaBloco--;
+				if(vidaBloco == 0){
 					alive = false;
-					contadorBloco = 0;
 				}
 				return true;
 			}
 		return false;
 	}
-	
-	
-	//==============SE BATEU NO BLOCO, APAGA============================
-		public boolean colidiu(Bola bola){
-			
-			if (!alive) return false;
-			Point posicaoBola = bola.getPosition();
-			double tamanhoX = super.getPosition().x + super.getWidth();
-			double tamanhoY = super.getPosition().y + super.getHeight();
-			if (super.getPosition().x <= posicaoBola.x && tamanhoX >= posicaoBola.x)
-				if (super.getPosition().y <= posicaoBola.y && tamanhoY >= posicaoBola.y){
-					alive = false;
-					return true;
-				}
-			return false;
-		}
-	
-	
-	
-	
 	
 }
